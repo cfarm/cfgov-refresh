@@ -31,10 +31,12 @@ Given the `MAJOR.MINOR.PATCH` pattern, here is how we decide to increment:
 - Added tests for the public methods in the Multiselect
 - API client for Regulations.gov Comment API
 - reg-comment organism and Wagtail module for adding it to a page
+- Frontend: Added task for generating JavaScript code docs.
 
 ### Changed
 
 - Make further reading and list filter results distinct
+- Frontend: Renamed and added `packageName` parameter to `fs-helper.js`.
 
 ### Removed
 

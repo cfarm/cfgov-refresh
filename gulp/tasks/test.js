@@ -5,7 +5,7 @@ var $ = require( 'gulp-load-plugins' )();
 var childProcess = require( 'child_process' );
 var spawn = childProcess.spawn;
 var config = require( '../config' ).test;
-var fsHelper = require( '../utils/fsHelper' );
+var fsHelper = require( '../utils/fs-helper' );
 var minimist = require( 'minimist' );
 
 /**
@@ -150,7 +150,7 @@ function _parsePath( urlPath ) {
  */
 function testA11y() {
   spawn(
-    fsHelper.getBinary( 'wcag', '.bin' ),
+    fsHelper.getBinary( 'wcag', 'wcag', '../.bin' ),
     _getWCAGParams(),
     { stdio: 'inherit' }
   ).once( 'close', function() {
@@ -163,7 +163,7 @@ function testA11y() {
  */
 function testAcceptanceBrowser() {
   spawn(
-    fsHelper.getBinary( 'protractor' ),
+    fsHelper.getBinary( 'protractor', 'protractor', '../bin/' ),
     _getProtractorParams(),
     { stdio: 'inherit' }
   ).once( 'close', function() {
