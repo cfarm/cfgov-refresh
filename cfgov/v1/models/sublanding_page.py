@@ -67,7 +67,7 @@ class SublandingPage(CFGOVPage):
                         if 'FilterablePage' in p.specific_class.__name__ and 'archive' not in p.title.lower()]
         filtered_controls = {}
         for page in filter_pages:
-            id = str(util.get_form_id(page, request.GET))
+            id = str(util.get_form_id(page))
             if id not in filtered_controls.keys():
                 filtered_controls.update({id: []})
             form_class = page.get_form_class()

@@ -145,7 +145,7 @@ def related_metadata_tags(context, page):
     tags = {'links': []}
     # From an ancestor, get the form ids then use the first id since the 
     # filterable list on the page will probably have the first id on the page.
-    id, filter_page = get_filter_data(context, page)
+    id, filter_page = get_filter_data(page)
     for tag in page.specific.tags.names():
         tag_link = {'text': tag, 'url': ''}
         if id is not None and filter_page is not None:
@@ -155,11 +155,9 @@ def related_metadata_tags(context, page):
     return tags
 
 
-@contextfunction
-def get_filter_data(context, page):
+def get_filter_data(page):
     for ancestor in page.get_ancestors().reverse().specific():
         if ancestor.specific_class.__name__ in ['BrowseFilterablePage', 'SublandingFilterablePage',
                                                 'EventArchivePage', 'NewsroomLandingPage']:
-            return util.get_form_id(ancestor, context['request'].GET), ancestor
-
+            return util.get_form_id(ancestor), ancestor
     return None, None

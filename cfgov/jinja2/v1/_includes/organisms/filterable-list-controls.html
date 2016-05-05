@@ -179,7 +179,9 @@
 {% from 'molecules/notification.html' import render as notification with context %}
 {% from 'organisms/post-preview.html' import render as post_preview with context %}
 
-{% macro render(controls, form, index) %}
+{% macro render(controls, index) %}
+    {% set form = filter_data.forms.pop(0) %}
+    {% set posts = filter_data.page_sets.pop(0) %}
     <div class="o-filterable-list-controls">
         {% set has_active_filters = page.has_active_filters(request, index) %}
         {% if has_active_filters %}
