@@ -24,9 +24,12 @@ function ExpandableGroup( element ) {
   var _isAccordion;
 
   /**
-   * @returns {Object} The ExpandableGroup instance.
+   * @returns {ExpandableGroup|undefined} An instance,
+   *   or undefined if it was already initialized.
    */
   function init() {
+    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+
     _isAccordion = _dom.classList.contains( BASE_CLASS + '__accordion' );
 
     var child;

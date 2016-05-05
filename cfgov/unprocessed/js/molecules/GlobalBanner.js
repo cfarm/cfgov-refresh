@@ -30,14 +30,20 @@ function GlobalBanner( element ) {
 
   /**
    * Set up DOM references and event handlers.
+   * @returns {GlobalBanner|undefined} An instance,
+   *   or undefined if it was already initialized.
    */
   function init() {
+    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+
     // Init Expandable.
     var isExpanded = webStorageProxy.getItem( EXPANDED_STATE ) !== 'false';
     _expandable = new Expandable( _dom.querySelector( '.m-expandable' ) );
     _expandable.init( isExpanded && _expandable.EXPANDED );
 
     _initEvents();
+
+    return this;
   }
 
   /**

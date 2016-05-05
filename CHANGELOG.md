@@ -27,6 +27,7 @@ Given the `MAJOR.MINOR.PATCH` pattern, here is how we decide to increment:
 
 - Frontend: Added No Fear Act link to footer.
 - Updated event times to show EDT.
+- Frontend: Added init flag when initializing atomic components.
 
 ### Removed
 

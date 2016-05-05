@@ -22,9 +22,12 @@ function Footer( element ) {
   var _dom = atomicHelpers.checkDom( element, BASE_CLASS, 'Footer' );
 
   /**
-   * @returns {Footer} The instance.
+   * @returns {Footer|undefined} An instance,
+   *   or undefined if it was already initialized.
    */
   function init() {
+    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+
     footerButton.init();
 
     return this;

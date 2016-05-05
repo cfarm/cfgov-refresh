@@ -36,9 +36,12 @@ function GlobalSearch( element ) { // eslint-disable-line max-statements, no-inl
   var KEY_TAB = 9;
 
   /**
-   * @returns {Object} The GlobalSearch instance.
+   * @returns {GlobalSearch|undefined} An instance,
+   *   or undefined if it was already initialized.
    */
   function init() {
+    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+
     // Set initial appearance.
     var transition = new MoveTransition( _contentDom ).init();
     transition.moveRight();

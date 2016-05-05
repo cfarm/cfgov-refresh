@@ -40,9 +40,12 @@ function MegaMenu( element ) {
   var KEY_TAB = 9;
 
   /**
-   * @returns {MegaMenu} An instance.
+   * @returns {MegaMenu|undefined} An instance,
+   *   or undefined if it was already initialized.
    */
   function init() {
+    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+
     // DOM selectors.
     var rootMenuDom = _dom;
     var rootContentDom = rootMenuDom.querySelector( FlyoutMenu.CONTENT_SEL );

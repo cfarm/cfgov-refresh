@@ -30,9 +30,12 @@ function Header( element ) {
   /**
    * @param {HTMLNode} overlay
    *   Overlay to show/hide when mobile mega menu is shown.
-   * @returns {Object} The Header instance.
+   * @returns {Header|undefined} An instance,
+   *   or undefined if it was already initialized.
    */
   function init( overlay ) {
+    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+
     // TODO: Investigate a better method of handling optional elements.
     //       Banner is optional, so we don't want to throw a nice error
     //       when its DOM isn't found.
