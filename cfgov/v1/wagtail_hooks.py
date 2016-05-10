@@ -10,7 +10,7 @@ from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore import hooks
 
 from v1.models import CFGOVPage
-
+from publish_eccu.publish import publish as akamai_cache_reset
 
 @hooks.register('after_create_page')
 @hooks.register('after_edit_page')
@@ -51,6 +51,11 @@ def share_the_page(request, page):
     latest.save()
     if is_publishing:
         latest.publish()
+        url_paths = [page.url_path.replace('cfgov/','')]
+        if url_paths[0] == '/':
+            akamai_cache_reset(invalidate_root=True)
+        else:
+            akamai_cache_reset(url_paths)
 
 
 @hooks.register('before_serve_page')
