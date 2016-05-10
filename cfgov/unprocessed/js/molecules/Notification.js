@@ -2,6 +2,7 @@
 
 // Required modules.
 var atomicHelpers = require( '../modules/util/atomic-helpers' );
+var standardType = require( '../modules/util/standard-type' );
 
 /**
  * Notification
@@ -35,7 +36,9 @@ function Notification( element ) { // eslint-disable-line max-statements, inline
    *   or undefined if it was already initialized.
    */
   function init() {
-    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+    if ( !atomicHelpers.setInitFlag( _dom ) ) {
+      return standardType.UNDEFINED;
+    }
 
     // Check and set default type of notification.
     var classList = _dom.classList;

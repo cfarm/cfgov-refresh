@@ -1,8 +1,9 @@
 'use strict';
 
 // Required modules.
-var Expandable = require( '../molecules/Expandable' );
 var atomicHelpers = require( '../modules/util/atomic-helpers' );
+var Expandable = require( '../molecules/Expandable' );
+var standardType = require( '../modules/util/standard-type' );
 
 /**
  * ExpandableGroup
@@ -28,7 +29,9 @@ function ExpandableGroup( element ) {
    *   or undefined if it was already initialized.
    */
   function init() {
-    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+    if ( !atomicHelpers.setInitFlag( _dom ) ) {
+      return standardType.UNDEFINED;
+    }
 
     _isAccordion = _dom.classList.contains( BASE_CLASS + '__accordion' );
 

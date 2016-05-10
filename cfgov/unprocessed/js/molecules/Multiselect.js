@@ -3,10 +3,11 @@
 // Required modules.
 var arrayHelpers = require( '../modules/util/array-helpers' );
 var atomicHelpers = require( '../modules/util/atomic-helpers' );
-var queryOne = require( '../modules/util/dom-traverse' ).queryOne;
-var domCreate = require( '../modules/util/dom-manipulators' ).create;
-var strings = require( '../modules/util/strings' );
 var bindEvent = require( '../modules/util/dom-events' ).bindEvent;
+var domCreate = require( '../modules/util/dom-manipulators' ).create;
+var queryOne = require( '../modules/util/dom-traverse' ).queryOne;
+var standardType = require( '../modules/util/standard-type' );
+var strings = require( '../modules/util/strings' );
 
 /**
  * Multiselect
@@ -60,7 +61,9 @@ function Multiselect( element ) { // eslint-disable-line max-statements, inline-
    *   or undefined if it was already initialized.
    */
   function init() {
-    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+    if ( !atomicHelpers.setInitFlag( _dom ) ) {
+      return standardType.UNDEFINED;
+    }
 
     _name = _dom.name;
     _options = _dom.options || [];

@@ -6,6 +6,7 @@ var ERROR_MESSAGES = require( '../config/error-messages-config' );
 var getClosestElement = require( '../modules/util/dom-traverse' ).closest;
 var Multiselect = require( '../molecules/Multiselect' );
 var Notification = require( '../molecules/Notification' );
+var standardType = require( '../modules/util/standard-type' );
 var validators = require( '../modules/util/validators' );
 
 /**
@@ -45,7 +46,9 @@ function FilterableListControls( element ) {
    *   or undefined if it was already initialized.
    */
   function init() {
-    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+    if ( !atomicHelpers.setInitFlag( _dom ) ) {
+      return standardType.UNDEFINED;
+    }
 
     _notification = new Notification( _dom );
     _notification.init();

@@ -11,6 +11,7 @@ var MegaMenuDesktop = require( '../organisms/MegaMenuDesktop' );
 var MegaMenuMobile = require( '../organisms/MegaMenuMobile' );
 var MoveTransition = require( '../modules/transition/MoveTransition' );
 var Tree = require( '../modules/Tree' );
+var standardType = require( '../modules/util/standard-type' );
 
 /**
  * MegaMenu
@@ -44,7 +45,9 @@ function MegaMenu( element ) {
    *   or undefined if it was already initialized.
    */
   function init() {
-    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+    if ( !atomicHelpers.setInitFlag( _dom ) ) {
+      return standardType.UNDEFINED;
+    }
 
     // DOM selectors.
     var rootMenuDom = _dom;

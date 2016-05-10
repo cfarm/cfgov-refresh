@@ -9,6 +9,7 @@
 var atomicHelpers = require( '../modules/util/atomic-helpers' );
 var Expandable = require( '../molecules/Expandable' );
 var webStorageProxy = require( '../modules/util/web-storage-proxy' );
+var standardType = require( '../modules/util/standard-type' );
 
 /**
  * GlobalBanner
@@ -34,7 +35,9 @@ function GlobalBanner( element ) {
    *   or undefined if it was already initialized.
    */
   function init() {
-    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+    if ( !atomicHelpers.setInitFlag( _dom ) ) {
+      return standardType.UNDEFINED;
+    }
 
     // Init Expandable.
     var isExpanded = webStorageProxy.getItem( EXPANDED_STATE ) !== 'false';

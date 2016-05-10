@@ -8,6 +8,7 @@ var EventObserver = require( '../modules/util/EventObserver' );
 var FlyoutMenu = require( '../modules/FlyoutMenu' );
 var fnBind = require( '../modules/util/fn-bind' ).fnBind;
 var MoveTransition = require( '../modules/transition/MoveTransition' );
+var standardType = require( '../modules/util/standard-type' );
 
 /**
  * GlobalSearch
@@ -40,7 +41,9 @@ function GlobalSearch( element ) { // eslint-disable-line max-statements, no-inl
    *   or undefined if it was already initialized.
    */
   function init() {
-    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+    if ( !atomicHelpers.setInitFlag( _dom ) ) {
+      return standardType.UNDEFINED;
+    }
 
     // Set initial appearance.
     var transition = new MoveTransition( _contentDom ).init();

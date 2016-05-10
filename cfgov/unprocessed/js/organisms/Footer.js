@@ -3,7 +3,7 @@
 // Required modules.
 var atomicHelpers = require( '../modules/util/atomic-helpers' );
 var footerButton = require( '../modules/footer-button' );
-
+var standardType = require( '../modules/util/standard-type' );
 
 /**
  * Footer
@@ -26,7 +26,9 @@ function Footer( element ) {
    *   or undefined if it was already initialized.
    */
   function init() {
-    if ( !atomicHelpers.setInitFlag( _dom ) ) { var inst; return inst; }
+    if ( !atomicHelpers.setInitFlag( _dom ) ) {
+      return standardType.UNDEFINED;
+    }
 
     footerButton.init();
 
