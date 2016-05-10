@@ -99,7 +99,7 @@ function instantiateAll( selector, Constructor ) {
 
 // Expose public methods.
 module.exports = {
-  checkDom: checkDom,
+  checkDom:       checkDom,
   instantiateAll: instantiateAll,
-  setInitFlag: setInitFlag
+  setInitFlag:    setInitFlag
 };
