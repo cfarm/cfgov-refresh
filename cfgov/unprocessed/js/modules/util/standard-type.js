@@ -27,7 +27,8 @@ function noopFunct() {
 var UNDEFINED;
 
 module.exports = {
-  JS_HOOK:   JS_HOOK,
-  noopFunct: noopFunct,
-  UNDEFINED: UNDEFINED
+  JS_HOOK:    JS_HOOK,
+  noopFunct:  noopFunct,
+  STATE_INIT: STATE_INIT,
+  UNDEFINED:  UNDEFINED
 };
