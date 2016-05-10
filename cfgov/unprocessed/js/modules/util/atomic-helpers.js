@@ -6,7 +6,7 @@
 
 'use strict';
 
-var dataHook = require( './data-hook' );
+var standardType = require( './standard-type' );
 
 // TODO: Update baseClass to baseSel to handle CSS selector instead of a class.
 /**
@@ -71,11 +71,11 @@ function _verifyClassExists( element, baseClass ) {
  *   false otherwise.
  */
 function setInitFlag( element ) {
-  if ( dataHook.contains( element, 'init' ) ) {
+  if ( element.getAttribute( standardType.STATE_INIT ) ) {
     return false;
   }
 
-  dataHook.add( element, 'init' );
+  element.setAttribute( standardType.STATE_INIT, 'true' );
 
   return true;
 }
