@@ -39,3 +39,9 @@ class Feedback(AbstractFormBlock):
     class Meta:
         handler = 'v1.handlers.blocks.feedback.FeedbackHandler'
         template = '_includes/blocks/feedback.html'
+
+
+class StaticFilePath(blocks.CharBlock):
+    class Meta:
+        icon = 'file'
+        template = '_includes/blocks/static-file-path.html'

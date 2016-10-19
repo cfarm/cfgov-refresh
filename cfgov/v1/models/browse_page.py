@@ -36,6 +36,7 @@ class BrowsePage(CFGOVPage):
         ('table_block', organisms.AtomicTableBlock(table_options={'renderer':'html'})),
         ('job_listing_table', JobListingTable()),
         ('feedback', v1_blocks.Feedback()),
+        ('static_file_path', v1_blocks.StaticFilePath()),
         ('conference_registration_form', ConferenceRegistrationForm()),
     ], blank=True)
 
