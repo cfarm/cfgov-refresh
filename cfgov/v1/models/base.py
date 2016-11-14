@@ -145,12 +145,12 @@ class CFGOVPage(Page):
         return sorted(author_names, key=lambda x: x.name.split()[-1])
 
     def generate_view_more_url(self, request):
-        from ..forms import ActivityLogFilterForm
+        from ..forms import FilterableListForm
         activity_log = CFGOVPage.objects.get(slug='activity-log').specific
-        form = ActivityLogFilterForm(parent=activity_log, hostname=request.site.hostname)
+        form = FilterableListForm(parent=activity_log, hostname=request.site.hostname)
         available_tags = [tag[0] for name, tags in form.fields['topics'].choices for tag in tags]
         tags = []
-        index = util.get_form_id(activity_log)
+        index = activity_log.form_id()
         for tag in self.tags.slugs():
             if tag in available_tags:
                 tags.append('filter%s_topics=' % index + urllib.quote_plus(tag))
@@ -212,12 +212,26 @@ class CFGOVPage(Page):
         return {search_type: queryset for search_type, queryset in
                 related.items() if queryset}
 
+    def get_appropriate_page_version(self, request):
+        # If we're on the production site, make sure the version of the page
+        # displayed is the latest version that has `live` set to True for
+        # the live site or `shared` set to True for the staging site.
+        revisions = self.revisions.all().order_by('-created_at')
+        for revision in revisions:
+            page_version = json.loads(revision.content_json)
+            if not request.is_staging:
+                if page_version['live']:
+                    return revision.as_page_object()
+            else:
+                if page_version['shared']:
+                    return revision.as_page_object()
+
     def get_breadcrumbs(self, request):
         ancestors = self.get_ancestors()
         home_page_children = request.site.root_page.get_children()
         for i, ancestor in enumerate(ancestors):
             if ancestor in home_page_children:
-                return [util.get_appropriate_page_version(request, ancestor) for ancestor in ancestors[i+1:]]
+                return [ancestor.specific.get_appropriate_page_version(request) for ancestor in ancestors[i+1:]]
         return []
 
     def get_appropriate_descendants(self, hostname, inclusive=True):
@@ -352,7 +366,7 @@ class CFGOVPage(Page):
 
         else:
             # Request is for this very page.
-            page = util.get_appropriate_page_version(request, self)
+            page = self.get_appropriate_page_version(request)
             if page:
                 return RouteResult(page)
             raise Http404

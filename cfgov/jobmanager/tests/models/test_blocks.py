@@ -1,8 +1,9 @@
 from datetime import date
 from django.test import TestCase
 from django.utils import timezone
+from mock import Mock
 from model_mommy import mommy
-from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.models import Page, Site
 
 from cfgov.test import HtmlMixin
 from jobmanager.models.blocks import JobListingList, JobListingTable
@@ -11,9 +12,8 @@ from jobmanager.models.pages import JobListingPage
 from jobmanager.models.panels import GradePanel, RegionPanel
 from scripts._atomic_helpers import job_listing_list
 from v1.models import SublandingPage
-from v1.tests.wagtail_pages.helpers import (
-    save_new_page, set_page_stream_data
-)
+from v1.tests.wagtail_pages.helpers import save_new_page
+from v1.util.migrations import set_stream_data
 
 
 def make_job_listing_page(title, close_date=None, grades=[], regions=[],
@@ -42,6 +42,9 @@ def make_job_listing_page(title, close_date=None, grades=[], regions=[],
 
 
 class JobListingListTestCase(HtmlMixin, TestCase):
+    def setUp(self):
+        self.request = Mock(site=Site.objects.get(is_default_site=True))
+
     def test_html_has_aside(self):
         block = JobListingList()
         html = block.render(block.to_python({}))
@@ -61,7 +64,10 @@ class JobListingListTestCase(HtmlMixin, TestCase):
         )
 
         block = JobListingList()
-        html = block.render(block.to_python({}))
+        html = block.render(
+            block.to_python({}),
+            context={'request': self.request}
+        )
 
         self.assertHtmlRegexpMatches(html, (
             '<ul class="list list__unstyled">.*</ul>'
@@ -82,7 +88,10 @@ class JobListingListTestCase(HtmlMixin, TestCase):
         )
 
         block = JobListingList()
-        html = block.render(block.to_python({}))
+        html = block.render(
+            block.to_python({}),
+            context={'request': self.request}
+        )
 
         self.assertHtmlRegexpMatches(html, (
             '<li class="list_item">'
@@ -126,7 +135,7 @@ class JobListingListTestCase(HtmlMixin, TestCase):
         """
         page = SublandingPage(title='title', slug='slug')
         save_new_page(page)
-        set_page_stream_data(page, 'sidebar_breakout', [job_listing_list])
+        set_stream_data(page, 'sidebar_breakout', [job_listing_list])
 
         self.assertPageIncludesHtml(page, (
             '><aside class="m-jobs-list" data-qa-hook="openings-section">'
@@ -180,13 +189,13 @@ class JobListingTableTestCase(HtmlMixin, TestCase):
 
         self.assertHtmlRegexpMatches(html, (
             '<tr>'
-            '<td data-label="TITLE"><a href=".*">Assistant</a></td>'
+            '<td data-label="TITLE"><a class="" href=".*">Assistant</a></td>'
             '<td data-label="GRADE">12</td>'
             '<td data-label="POSTING CLOSES">APR 21, 2099</td>'
             '<td data-label="REGION">Silicon Valley</td>'
             '</tr>'
             '<tr>'
-            '<td data-label="TITLE"><a href=".*">Manager</a></td>'
+            '<td data-label="TITLE"><a class="" href=".*">Manager</a></td>'
             '<td data-label="GRADE">1, 2, 3</td>'
             '<td data-label="POSTING CLOSES">AUG 05, 2099</td>'
             '<td data-label="REGION">DC, NY</td>'
@@ -204,7 +213,7 @@ class JobListingTableTestCase(HtmlMixin, TestCase):
 
         self.assertHtmlRegexpMatches(html, (
             '<tr>'
-            '<td data-label="TITLE"><a href=".*">CEO</a></td>'
+            '<td data-label="TITLE"><a class="" href=".*">CEO</a></td>'
             '<td data-label="GRADE"></td>'
             '<td data-label="POSTING CLOSES">DEC 01, 2099</td>'
             '<td data-label="REGION"></td>'

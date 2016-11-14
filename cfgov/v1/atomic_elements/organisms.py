@@ -100,6 +100,9 @@ class EmailSignUp(blocks.StructBlock):
         icon = 'mail'
         template = '_includes/organisms/email-signup.html'
 
+    class Media:
+        js = ['email-signup.js']
+
 
 class RegComment(blocks.StructBlock):
     document_id = blocks.CharBlock(required=True, label='Document ID',
@@ -301,7 +304,7 @@ class ModelTable(ModelBlock):
         help_text='Stack the table columns on mobile.'
     )
 
-    def render(self, value):
+    def render(self, value, context=None):
         rows = [self.field_headers]
 
         rows.extend([
@@ -322,7 +325,7 @@ class ModelTable(ModelBlock):
 
         table = AtomicTableBlock()
         value = table.to_python(table_value)
-        return table.render(value)
+        return table.render(value, context=context)
 
     def make_row(self, instance):
         return [
@@ -355,7 +358,7 @@ class ModelList(ModelBlock):
 
     For example:
 
-        def render(self, value):
+        def render(self, value, context=None):
             value['objects'] = self.get_queryset(value)
             template = 'path/to/template.html'
             return render_to_string(template, value)
@@ -379,6 +382,7 @@ class ModelList(ModelBlock):
 
 
 class FullWidthText(blocks.StreamBlock):
+    content_with_anchor = molecules.ContentWithAnchor()
     content = blocks.RichTextBlock(icon='edit')
     media = images_blocks.ImageChooserBlock(icon='image')
     quote = molecules.Quote()
@@ -438,13 +442,21 @@ class ExpandableGroup(blocks.StructBlock):
 
 
 class ItemIntroduction(blocks.StructBlock):
-    category = blocks.ChoiceBlock(choices=ref.categories, required=False)
+    show_category = blocks.BooleanBlock(
+        required=False,
+        default=True,
+        help_text=(
+            "Whether to show the category or not "
+            "(category must be set in 'Configuration')."
+        )
+    )
 
     heading = blocks.CharBlock(required=False)
     paragraph = blocks.RichTextBlock(required=False)
 
     date = blocks.DateBlock(required=False)
-    has_social = blocks.BooleanBlock(required=False, help_text="Whether to show the share icons or not.")
+    has_social = blocks.BooleanBlock(
+        required=False, help_text="Whether to show the share icons or not.")
 
     class Meta:
         icon = 'form'

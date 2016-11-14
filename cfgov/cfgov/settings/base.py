@@ -1,4 +1,4 @@
-import os
+import os, sys
 from unipath import Path
 from ..util import admin_emails
 
@@ -18,12 +18,6 @@ PASSWORD_HASHERS = global_settings.PASSWORD_HASHERS
 
 # see https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-USE_ETAGS
 USE_ETAGS = True
-
-try:
-    import mysql
-    MYSQL_ENGINE = 'mysql.connector.django'
-except ImportError:
-    MYSQL_ENGINE = 'django.db.backends.mysql'
 
 # Application definition
 
@@ -66,12 +60,12 @@ INSTALLED_APPS = (
     'legacy',
     'django_extensions',
     'reversion',
-    'tinymce'
+    'tinymce',
+    'jobmanager',
 )
 
 OPTIONAL_APPS = [
     {'import': 'noticeandcomment', 'apps': ('noticeandcomment',)},
-    {'import': 'jobmanager', 'apps': ('jobmanager', 'reversion', 'tinymce')},
     {'import': 'comparisontool', 'apps': ('comparisontool', 'haystack',)},
     {'import': 'paying_for_college',
      'apps': ('paying_for_college', 'haystack',)},
@@ -88,12 +82,12 @@ OPTIONAL_APPS = [
     {'import': 'eregsip', 'apps': ('eregsip',)},
     {'import': 'regulations', 'apps': ('regulations',)},
     {'import': 'picard', 'apps': ('picard',)},
-    {'import': 'publish-eccu', 'apps': ('publish-eccu',)},
 ]
 
 MIDDLEWARE_CLASSES = (
     'sheerlike.middleware.GlobalRequestMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -101,13 +95,23 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-
     'wagtail.wagtailcore.middleware.SiteMiddleware',
-
     'wagtail.wagtailredirects.middleware.RedirectMiddleware',
     'transition_utilities.middleware.RewriteNemoURLsMiddleware',
     'v1.middleware.StagingMiddleware',
+    'core.middleware.DownstreamCacheControlMiddleware'
 )
+
+CSP_MIDDLEWARE_CLASSES = ('core.middleware.CSPScriptHashMiddleware',
+                          'csp.middleware.CSPMiddleware')
+
+if ('CSP_ENFORCE' in os.environ or 'CSP_REPORT' in os.environ):
+    MIDDLEWARE_CLASSES += CSP_MIDDLEWARE_CLASSES
+
+if 'CSP_REPORT' in os.environ:
+    CSP_REPORT_ONLY = True
+
+CSP_REPORT_URI = '/csp-report/'
 
 ROOT_URLCONF = 'cfgov.urls'
 
@@ -151,19 +155,31 @@ WSGI_APPLICATION = 'cfgov.wsgi.application'
 # Admin Url Access
 ALLOW_ADMIN_URL = os.environ.get('ALLOW_ADMIN_URL', False)
 
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
+if 'collectstatic' in sys.argv:
+    COLLECTSTATIC = True
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'v1',
+        }
+    }
+else:
+    COLLECTSTATIC = False
+    MYSQL_ENGINE = 'django.db.backends.mysql'
 
-DATABASES = {
-    'default': {
-        'ENGINE': MYSQL_ENGINE,
-        'NAME': os.environ.get('MYSQL_NAME', 'v1'),
-        'USER': os.environ.get('MYSQL_USER', 'root'),
-        'PASSWORD': os.environ.get('MYSQL_PW', ''),
-        'HOST': os.environ.get('MYSQL_HOST', ''),  # empty string == localhost
-        'PORT': os.environ.get('MYSQL_PORT', ''),  # empty string == default
-    },
-}
+    # Database
+    # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
+
+    DATABASES = {
+        'default': {
+            'ENGINE': MYSQL_ENGINE,
+            'NAME': os.environ.get('MYSQL_NAME', 'v1'),
+            'USER': os.environ.get('MYSQL_USER', 'root'),
+            'PASSWORD': os.environ.get('MYSQL_PW', ''),
+            'HOST': os.environ.get('MYSQL_HOST', ''),  # empty string == localhost
+            'PORT': os.environ.get('MYSQL_PORT', ''),  # empty string == default
+        },
+    }
 
 
 # Internationalization
@@ -349,7 +365,7 @@ HAYSTACK_CONNECTIONS = {
 # S3 Configuration
 if os.environ.get('S3_ENABLED', 'False') == 'True':
     DEFAULT_FILE_STORAGE = 'v1.s3utils.MediaRootS3BotoStorage'
-    AWS_S3_SECURE_URLS = False  # True = use https; False = use http
+    AWS_S3_SECURE_URLS = True  # True = use https; False = use http
     AWS_QUERYSTRING_AUTH = False  # False = do not use authentication-related query parameters for requests
     AWS_S3_ACCESS_KEY_ID = os.environ.get('AWS_S3_ACCESS_KEY_ID')
     AWS_S3_SECRET_ACCESS_KEY = os.environ.get('AWS_S3_SECRET_ACCESS_KEY')
@@ -419,9 +435,6 @@ SHEER_SITES = {
         'know-before-you-owe':
             Path(os.environ.get('KBYO_SHEER_PATH') or
             Path(REPOSITORY_ROOT, '../know-before-you-owe/dist')),
-        'tax-time-saving':
-            Path(os.environ.get('TAX_TIME_SHEER_PATH') or
-            Path(REPOSITORY_ROOT, '../tax-time-saving/dist')),
 }
 
 #The base URL for the API that we use to access layers and the regulation.
@@ -490,3 +503,57 @@ if ENABLE_AKAMAI_CACHE_PURGE:
 
 # Staging site
 STAGING_HOSTNAME = os.environ.get('DJANGO_STAGING_HOSTNAME')
+
+# CSP Whitelists
+
+# These specify what is allowed in <script> tags.
+CSP_SCRIPT_SRC = ("'self'",
+                  "'unsafe-inline'",
+                  "'unsafe-eval'",
+                  '*.google-analytics.com',
+                  '*.googletagmanager.com',
+                  'ajax.googleapis.com',
+                  'search.usa.gov',
+                  'api.mapbox.com',
+                  'js-agent.newrelic.com',
+                  'dnn506yrbagrg.cloudfront.net',
+                  '*.doubleclick.net',
+                  'bam.nr-data.net',
+                  '*.youtube.com',
+                  '*.ytimg.com',
+                  'trk.cetrk.com')
+
+# These specify valid sources of CSS code
+CSP_STYLE_SRC = ("'self'",
+                 "'unsafe-inline'",
+                 'fast.fonts.net',
+                 'api.mapbox.com')
+
+# These specify valid image sources
+CSP_IMG_SRC= ("'self'",
+              's3.amazonaws.com',
+              'stats.g.doubleclick.net',
+              'files.consumerfinance.gov',
+              'img.youtube.com',
+              '*.google-analytics.com',
+              'trk.cetrk.com',
+              'searchstats.usa.gov',
+              'gtrk.s3.amazonaws.com',
+              '*.googletagmanager.com',
+              'api.mapbox.com',
+              '*.tiles.mapbox.com',
+              'data:')
+
+# These specify what URL's we allow to appear in frames/iframes
+CSP_FRAME_SRC= ("'self'",
+                '*.googletagmanager.com',
+                '*.google-analytics.com',
+                'www.youtube.com',
+                '*.doubleclick.net')
+
+# These specify where we allow fonts to come from
+CSP_FONT_SRC = ("'self'", 'fast.fonts.net')
+
+# These specify what hosts we can make (potentially) cross-domain AJAX requests to.
+CSP_CONNECT_SRC = ("'self'", '*.tiles.mapbox.com')
+

@@ -16,10 +16,67 @@ Given the `MAJOR.MINOR.PATCH` pattern, here is how we decide to increment:
 ## Unreleased
 
 ### Added
+- DownStreamCacheControl middleware, which sets the `Edge-Control: no-store` header pages use csrf_token.
+- django.middleware.locale.LocaleMiddleware, which controls translation in a current thread context. 
+
+### Changed
+- Fixed issue surrounding table link download / external icons not appearing.
+- Frontend: replaced `documentation` npm module with `jsdoc`.
+- Refactoring email signup to remove validate.js.
+- Frontend: update `browser-sync` to version `2.17.5` from `2.11.2`.
+- Frontend: update `mkdirp` to version `0.5.1` from `0.3.0`.
+- Fixed broken `manage.py check` command when using `cfgov.settings.test`.
+- Fixed conference registration form capacity logic.
+- Update `snyk` to version `1.19.1` from `1.13.2`.
+- Disable logging below CRITICAL when running Python unit tests.
+- Fixed empty `heading` value in link blobs
+- Picard upgraded to version 1.5.2.
+
+### Removed
+- `tax-time-saving` reference in `base.py` (it moved to Wagtail)
+- all references to `django-htmlmin`
+
+
+## 4.0.0
+
+### Added
+- Added smoke-test scripts to check static assets and base page responses.
+- new dependency: django-htmlmin, which compresses outgoing HTML
+- Added Wagtail StreamField migration utilities
+- Tests for `FilterableListForm`
+
+### Changed
+- Update base.html to conditionally include es5 script.
+- Wagtail upgraded to version 1.6.3.
+- Picard upgraded to version 1.5.1.
+- Moved site root setup from Django data migration into 'initial_data' script.
+- Graduated line lengths feature flag to main stylesheet.
+- Unit tests run via tox now include optional app tests, if optional apps are present.
+- Frontend: upgrade `gulp-sourcemaps` from `1.6.0` to `2.1.1`.
+- Modified org structure to change the Assistant Director to `Stacy Canan`.
+- `FilterableListForm` and related code, e.g. `get_page_set`
+- Updated "Standing up for you" stats on the homepage.
+- Use secure URLs for files stored on S3
+- Fixed grade ordering on job listing posts.
+- Updating Bureau Structure so Christopher D’Angelo isn't marked as "acting".
+
+### Removed
+- Removed Handlebars from `package.json` and `cf_notifier.js`.
+- `NewsroomFilterForm` and `ActivityLogFilterForm` and related tests
+- Removed `gulp-load-plugins` from `package.json`.
+- Removed  Laura Van Dyke from the press resources page.
+
+## 3.11.1
+
+### Changed
+- comparisontool updated to 1.2.7
+
+## 3.11.0
+
+### Added
 - New unit test checks for missing migrations that need to be generated using `makemigrations`.
 - Ability to run using HTTP locally with `./runserver.sh ssl`.
 - Load DigitalGov Search JS using HTTPS.
-- an initial robots.txt file
 
 ### Changed
 - Improved the help text in the Featured Content module in Wagtail.
@@ -31,7 +88,44 @@ Given the `MAJOR.MINOR.PATCH` pattern, here is how we decide to increment:
 - Moved careers page creation from Django data migrations to standalone Python scripts.
 - Use HTTPS when linking to search.consumerfinance.gov.
 
-### Removed
+## 3.10.10
+
+### Fixed
+- incorrectly used static tag on housing counselor page
+
+## 3.10.9
+
+### Added
+- robots.txt
+
+### Fixed
+- Update links in TableBlocks that reference internal documents or pages & have no href
+
+
+## 3.10.8
+
+### Added
+- enable the `USE_ETAGS` Django setting
+
+## 3.10.7
+
+### Fixes
+- Corrected a typo introduced in 3.10.7
+
+## 3.10.6
+
+### Fixes
+- replace a few remaining `STATIC_PREFIX` references with the `static` tag
+
+## 3.10.5
+
+### Fixes
+- adds missing `{% load staticfiles %}` tags
+
+## 3.10.4
+
+### Added
+- Added Prepaid Cards to mega menu. (Requires feature flag for now.)
 
 
 ## 3.10.3
