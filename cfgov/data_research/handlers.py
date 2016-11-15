@@ -64,23 +64,23 @@ class ConferenceRegistrationHandler(Handler):
         return self.fail(form)
 
     def subscribe(self, email, code):
-        try:
-            logger.info('subscribing to GovDelivery')
-            gd = GovDelivery(account_code=settings.ACCOUNT_CODE)
+        # try:
+        #     logger.info('subscribing to GovDelivery')
+        #     gd = GovDelivery(account_code=settings.ACCOUNT_CODE)
 
-            subscription_response = gd.set_subscriber_topics(
-                email_address=email,
-                topic_codes=[code]
-            )
+        #     subscription_response = gd.set_subscriber_topics(
+        #         email_address=email,
+        #         topic_codes=[code]
+        #     )
 
-            subscription_response.raise_for_status()
-        except Exception:
-            logger.exception('error subscribing to GovDelivery')
-            messages.error(self.request, (
-                'There was an error in your submission. '
-                'Please try again later.'
-            ))
-            return False
+        #     subscription_response.raise_for_status()
+        # except Exception:
+        #     logger.exception('error subscribing to GovDelivery')
+        #     messages.error(self.request, (
+        #         'There was an error in your submission. '
+        #         'Please try again later.'
+        #     ))
+        #     return False
 
         return True
 
@@ -88,8 +88,19 @@ class ConferenceRegistrationHandler(Handler):
         if self.request.is_ajax():
             return JsonResponse({'result': 'pass'})
         else:
-            messages.success(self.request,
-                             'Your submission was successfully received.')
+            messages.success(self.request, 'Thank you for registering for '
+                'the CFPB research conference on December 15-16, 2016. '
+                'We are looking forward to seeing you there!<br><br>'
+                '<span style="font-weight: normal; '
+                'font-family:AvenirNextLTW01-Regular,Arial,sans-serif">'
+                'Let us know if your plans change, and you can\'t make '
+                'the days you registered to attend. Also, let us know '
+                'if you have any questions about the event and how to '
+                'attend. Feel free to email us at '
+                '<a href="mailto:CFPB_ResearchConference@cfpb.gov">'
+                'CFPB_ResearchConference@cfpb.gov</a>.</span>',
+                extra_tags='safe')
+            # messages.success(self.request,'Your submission was successfully received.')
             return HttpResponseRedirect(self.page.url)
 
     def fail(self, form):
