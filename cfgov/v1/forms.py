@@ -8,7 +8,7 @@ from django.forms import widgets
 
 from taggit.models import Tag
 
-from v1.util import ERROR_MESSAGES, ref
+from v1.util import ERROR_MESSAGES, ref, util
 from v1.util.categories import clean_categories
 from v1.util.date_filter import end_of_time_period
 
@@ -97,6 +97,12 @@ class FilterableListForm(forms.Form):
         })
     )
 
+    status = forms.MultipleChoiceField(
+        required=False,
+        choices=[],
+        widget=widgets.CheckboxSelectMultiple()
+    )
+
     authors = forms.MultipleChoiceField(
         required=False,
         choices=[],
@@ -120,6 +126,7 @@ class FilterableListForm(forms.Form):
         page_ids = self.filterable_pages.values_list('id', flat=True)
         self.set_topics(page_ids)
         self.set_authors(page_ids)
+        self.set_status_choices(page_ids)
 
     def get_page_set(self):
         query = self.generate_query()
@@ -158,6 +165,13 @@ class FilterableListForm(forms.Form):
         options = self.prepare_options(arr=authors)
 
         self.fields['authors'].choices = options
+
+    # Populate Enforcement Status choices
+    def set_status_choices(self, page_ids):
+        status = util.get_streamfields(page_ids)
+        options = self.prepare_options(arr=status)
+
+        self.fields['status'].choices = options
 
     def clean(self):
         cleaned_data = super(FilterableListForm, self).clean()

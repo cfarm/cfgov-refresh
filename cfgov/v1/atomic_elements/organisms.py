@@ -924,6 +924,7 @@ class FilterableList(BaseExpandable):
         )
         show_topics = value['topic_filtering'] == 'sort_by_frequency' or \
             value['topic_filtering'] == 'sort_alphabetically'
+        # show_status = value['content'] ==
         # Different instances of FilterableList need to render their post
         # previews differently depending on the page type they live on. By
         # default post dates and tags are always shown.
@@ -931,6 +932,7 @@ class FilterableList(BaseExpandable):
             'show_post_dates': True,
             'show_post_tags': True,
             'show_topic_filter': show_topics,
+            'show_enforcement_status': True,
         })
 
         # Pull out the page type selected when the FilterableList was
