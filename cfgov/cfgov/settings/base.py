@@ -535,7 +535,8 @@ CSP_SCRIPT_SRC = (
     'connect.facebook.net',
     'www.federalregister.gov',
     'storage.googleapis.com',
-    'api.consumerfinance.gov'
+    'api.consumerfinance.gov',
+    'www.eventbrite.com'
 )
 
 # These specify valid sources of CSS code
@@ -588,6 +589,7 @@ CSP_FRAME_SRC = (
     'www.facebook.com',
     'staticxx.facebook.com',
     'mediasite.yorkcast.com',
+    'www.eventbrite.com'
 )
 
 # These specify where we allow fonts to come from
@@ -610,7 +612,8 @@ CSP_CONNECT_SRC = (
     's3.amazonaws.com',
     'public.govdelivery.com',
     'n2.mouseflow.com',
-    'api.iperceptions.com'
+    'api.iperceptions.com',
+    'www.eventbrite.com'
 )
 
 # Feature flags

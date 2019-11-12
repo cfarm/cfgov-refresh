@@ -48,7 +48,7 @@ RUN yum -y install gcc && \
 EXPOSE 8000
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
-CMD ["python", "./cfgov/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "./cfgov/manage.py", "runsslserver", "0.0.0.0:8000"]
 
 
 
